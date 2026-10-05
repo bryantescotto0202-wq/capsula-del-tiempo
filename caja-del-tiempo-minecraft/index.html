@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cápsula del Tiempo - Minecraft</title>
+  <!-- Fuente Pixel/Minecraft oficial -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.4.0/model-viewer.min.js"></script>
+</head>
+<body>
+
+  <!-- BARRA DE CONTROLES SUPERIOR IZQUIERDA -->
+  <div class="barra-superior-mc">
+    <button id="btn-musica" class="boton-mc sonar-hover" onclick="toggleMusica()">🎵 Música: ON</button>
+    <button class="boton-mc sonar-hover" onclick="togglePantallaCompleta()">🖥️ Exposición</button>
+    <button id="btn-logros-flotante" class="boton-mc sonar-hover" onclick="abrirLibroLogros()">🏆 Logros (<span id="contador-logros">0</span>/4)</button>
+  </div>
+
+  <!-- PANTALLA DE INICIO (LIBERA PERMISO DE AUDIO) -->
+  <div id="pantalla-inicio-audio" class="modal">
+    <div class="caja-pixel" style="text-align: center; max-width: 520px;">
+      <h2 style="color: #ffff55; font-size: 1rem; margin-bottom: 18px; text-transform: uppercase;">Cápsula del Tiempo</h2>
+      <p class="pista" style="font-size: 0.65rem; color: #aaaaaa; margin-bottom: 22px; line-height: 1.5;">Haz clic para activar el audio y entrar al mundo</p>
+      <button class="boton-mc sonar-hover" onclick="iniciarExperienciaConAudio()" style="background: #55ff55; color: #000; font-size: 0.85rem; width: 100%; padding: 14px 0; justify-content: center;">
+        ▶ ENTRAR AL MUNDO
+      </button>
+    </div>
+  </div>
+
+  <!-- Capa del Destello Nether -->
+  <div id="transicion-blanca" class="oculto"></div>
+
+  <!-- Contenedor de Partículas -->
+  <canvas id="canvas-particulas"></canvas>
+
+  <!-- Notificación de Logros -->
+  <div id="notificacion-logro" class="notificacion-logro oculto">
+    <div class="icono-logro">🏆</div>
+    <div>
+      <div class="header-logro">¡DESAFÍO REALIZADO!</div>
+      <div id="logro-titulo" class="titulo-logro">¡Código Descifrado!</div>
+    </div>
+  </div>
+
+  <!-- Chat estilo Minecraft -->
+  <div id="chat-minecraft"></div>
+
+  <!-- PANTALLA 1: BLOQUEO -->
+  <div id="pantalla-bloqueo" class="pantalla-centrada">
+    <div class="contenedor-principal-mc">
+      <div class="titulo-wrapper">
+        <span class="etiqueta-splash">¡Edición Minecraft!</span>
+        <h1 class="titulo-mc">CÁPSULA DEL TIEMPO 2027</h1>
+      </div>
+      <p class="subtitulo-mc">El tiempo dirá lo que el cofre guarda...</p>
+
+      <div class="temporizador-grid">
+        <div class="bloque-tiempo"><span id="dias">00</span><label>DÍAS</label></div>
+        <div class="bloque-tiempo"><span id="horas">00</span><label>HORAS</label></div>
+        <div class="bloque-tiempo"><span id="minutos">00</span><label>MINS</label></div>
+        <div class="bloque-tiempo"><span id="segundos">00</span><label>SEGS</label></div>
+      </div>
+
+      <div class="caja-pixel">
+        <h2 style="font-size: 0.95rem; color: #ffffff; margin-bottom: 14px;">INGRESA LA CLAVE DE ACCESO</h2>
+        <p class="subtitulo-caja">Escribe la clave para desbloquear el cofre:</p>
+
+        <div class="caja-encriptacion">
+          <div id="pantalla-caracteres" class="caracteres-glitch">????</div>
+        </div>
+
+        <div class="formulario-clave">
+          <input type="text" id="input-clave" placeholder="CLAVE..." autocomplete="off">
+        </div>
+
+        <button id="btn-desbloquear" class="boton-mc btn-desbloquear-mc sonar-hover" onclick="validarClave()" style="justify-content: center;">DESBLOQUEAR</button>
+        <p id="mensaje-error" class="mensaje-error"></p>
+      </div>
+    </div>
+  </div>
+
+  <!-- PANTALLA 2: PROYECTO (INVENTARIO 3D) -->
+  <div id="pantalla-proyecto" class="pantalla-centrada oculto">
+    <div class="caja-pixel caja-ancha">
+      <h2 style="color: #ffff55; font-size: 1.1rem;">INVENTARIO DE LA CÁPSULA</h2>
+      <p class="subtitulo-caja">Modelos 3D e Historia Tecnológica</p>
+
+      <div class="modelos-3d-grid">
+        <!-- Slot 1: BlackBerry -->
+        <div class="slot-inventario sonar-hover" 
+             data-nombre="BlackBerry (2008)" 
+             data-subtitulo="Tecnología del Pasado"
+             onmousedown="registrarInicioClic(event)" 
+             onmouseup="procesarFinClic(event, 'blackberry')" 
+             ontouchstart="registrarInicioClic(event)" 
+             ontouchend="procesarFinClic(event, 'blackberry')">
+          <h3>BlackBerry (Pasado)</h3>
+          <div class="visor-3d-wrapper">
+            <model-viewer 
+              src="blackberry.glb" 
+              alt="Modelo 3D de BlackBerry"
+              auto-rotate 
+              camera-controls 
+              disable-zoom
+              disable-tap
+              disable-pan
+              interaction-prompt="none"
+              shadow-intensity="1"
+              camera-orbit="0deg 75deg 105%"
+              field-of-view="30deg"
+              exposure="1.1">
+            </model-viewer>
+          </div>
+          <p class="pie-slot">🔄 Arrastra para ver en 3D<br>💡 Clic para ver dato</p>
+        </div>
+
+        <!-- Slot 2: Smartphone -->
+        <div class="slot-inventario sonar-hover" 
+             data-nombre="Smartphone (2026)" 
+             data-subtitulo="Tecnología del Presente"
+             onmousedown="registrarInicioClic(event)" 
+             onmouseup="procesarFinClic(event, 'smartphone')" 
+             ontouchstart="registrarInicioClic(event)" 
+             ontouchend="procesarFinClic(event, 'smartphone')">
+          <h3>Smartphone (Presente)</h3>
+          <div class="visor-3d-wrapper">
+            <model-viewer 
+              src="smartphone.glb" 
+              alt="Modelo 3D de Smartphone"
+              auto-rotate 
+              camera-controls 
+              disable-zoom
+              disable-tap
+              disable-pan
+              interaction-prompt="none"
+              shadow-intensity="1"
+              camera-orbit="0deg 75deg 105%"
+              field-of-view="30deg"
+              exposure="1.1">
+            </model-viewer>
+          </div>
+          <p class="pie-slot">🔄 Arrastra para ver en 3D<br>💡 Clic para ver dato</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL INFO MODELO -->
+  <div id="modal-info" class="modal oculto">
+    <div class="caja-pixel" style="max-width: 500px;">
+      <h3 id="modal-titulo" style="font-size: 0.9rem; color: #ffff55;">Título</h3>
+      <p id="modal-texto" style="font-size: 0.65rem; color: #ffffff; line-height: 1.6; margin: 18px 0;">Descripción...</p>
+      <button class="boton-mc sonar-hover" onclick="cerrarInfo()" style="width: 100%; justify-content: center;">CERRAR</button>
+    </div>
+  </div>
+
+  <!-- MODAL LIBRO DE LOGROS -->
+  <div id="modal-logros" class="modal oculto">
+    <div class="caja-pixel" style="max-width: 520px;">
+      <h3 style="font-size: 0.9rem; color: #ffff55;">🏆 LIBRO DE DESAFÍOS</h3>
+      <div id="lista-logros-inventario" class="lista-logros-grid"></div>
+      <button class="boton-mc sonar-hover" onclick="cerrarLibroLogros()" style="margin-top: 18px; width: 100%; justify-content: center;">VOLVER</button>
+    </div>
+  </div>
+
+  <!-- TOOLTIP FLOTANTE MINECRAFT -->
+  <div id="tooltip-mc">
+    <span class="titulo-tooltip" id="tooltip-titulo"></span>
+    <span class="subtitulo-tooltip" id="tooltip-subtitulo"></span>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
