@@ -64,18 +64,21 @@ let bootFinalizado = false; // CONTROL DE ESPERA PARA EL REVELADO
 
 // AUDIOS
 const audios = {
-  tvOn: new Audio("sonido/crt_tv_on.mp3"),
-  tvOff: new Audio("sonido/crt_tv_off.mp3"),
-  estatica: new Audio("sonido/estatica.mp3"),
-  musica: new Audio("sonido/musica.mp3"),
-  typing: new Audio("sonido/typing.mp3"),
-  tick: new Audio("sonido/tick.mp3"),
-  revealChar: new Audio("sonido/reveal_char.mp3"),
-  modelClick: new Audio("sonido/model_click.mp3"),
-  granted: new Audio("sonido/granted.mp3"),
-  wrong: new Audio("sonido/wrong.mp3"),
-  glitch: new Audio("sonido/glitch.mp3")
+  tvOn: new Audio("crt_tv_on.mp3"),
+  tvOff: new Audio("crt_tv_off.mp3"),
+  estatica: new Audio("estatica.mp3"),
+  musica: new Audio("musica.mp3"),
+  typing: new Audio("typing.mp3"),
+  tick: new Audio("tick.mp3"),
+  revealChar: new Audio("reveal_char.mp3"),
+  modelClick: new Audio("model_click.mp3"),
+  granted: new Audio("granted.mp3"),
+  wrong: new Audio("wrong.mp3"),
+  glitch: new Audio("glitch.mp3"),
+  dudin: new Audio("dudin.mp3") // <-- NUEVO AUDIO 8-BIT
 };
+
+audios.dudin.volume = 0.50;
 
 audios.estatica.loop = true; audios.estatica.volume = 0.08;
 audios.musica.loop = true; audios.musica.volume = 0.22;
@@ -251,6 +254,28 @@ function verificarClave() {
   const password = passInput.value.trim().toUpperCase();
 
   if (password === "P28!") {
+    // Si la fecha objetivo AÚN NO se ha cumplido y NO están en Modo Demo
+    const ahora = new Date().getTime();
+    const tiempoRestante = fechaObjetivo - ahora;
+
+    if (tiempoRestante > 0 && !modoDemoActivo) {
+      // TROLLEO A LOS COMPAÑEROS QUE SE SABEN LA CLAVE
+      consoleStatus.innerText = ">> SABES EL SECRETO, PERO AÚN NO ES TIEMPO...";
+      
+      if (audioActivado) {
+        audios.wrong.pause();
+        audios.glitch.pause();
+        audios.dudin.currentTime = 0;
+        audios.dudin.play().catch(() => {});
+      }
+
+      // Pequeño parpadeo en el panel
+      mainTerminal.classList.add("glitch-shake");
+      setTimeout(() => { mainTerminal.classList.remove("glitch-shake"); }, 400);
+      return;
+    }
+
+    // SI YA LLEGÓ A CERO O ESTÁ EN MODO DEMO "bill"
     intentosFallidos = 0;
     consoleStatus.innerText = ">> ACCESO CONCEDIDO: MATERIALIZANDO ARTEFACTOS...";
     
@@ -268,6 +293,7 @@ function verificarClave() {
     abrirTimeline();
 
   } else {
+    // CLAVE INCORRECTA
     intentosFallidos++;
     if (intentosFallidos >= 3) {
       consoleStatus.innerText = ">> ¡ALERTA DE SEGURIDAD! SOBRECARGA EN EL SISTEMA.";
