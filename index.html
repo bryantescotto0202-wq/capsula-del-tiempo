@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FPS-3000 // TERMINAL MCGUCKET</title>
+  <link rel="stylesheet" href="style.css">
+  <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.4.0/model-viewer.min.js"></script>
+</head>
+<body>
+
+  <!-- Overlay para la animación CRT -->
+  <div class="crt-turn-on" id="crtOverlay"></div>
+
+  <!-- Lluvia de código / Interferencia -->
+  <div class="matrix-glitch-overlay hidden" id="matrixOverlay"></div>
+
+  <!-- Brillo / Scanline & Textura -->
+  <div class="crt-glass-texture"></div>
+  <div class="scanline"></div>
+
+  <!-- Pantalla de Apagado Total -->
+  <div class="power-off-screen hidden" id="powerOffScreen"></div>
+
+  <!-- Contenedor global -->
+  <div id="appContainer" class="app-wrapper">
+
+    <!-- Pantalla de Encendido -->
+    <div class="power-overlay" id="powerOverlay">
+      <div class="power-box crt-box">
+        <div class="power-symbol">⏻</div>
+        <h2>SYSTEM // MCGUCKET_CORE</h2>
+        <p class="power-sub">NÚCLEO DE EXTRACCIÓN TEMPORAL // v3.08</p>
+        <div class="status-pills">
+          <span class="pill">SEC: RESTRICTED</span>
+          <span class="pill">3D ENGINE: READY</span>
+        </div>
+        <button class="power-button dark-glitch-btn" id="powerBtn">
+          [ INICIAR PROTOCOLO DE EXTRACCIÓN ]
+        </button>
+      </div>
+    </div>
+
+    <!-- Pantalla de Booting -->
+    <div class="boot-screen hidden" id="bootScreen">
+      <div class="boot-header">
+        <span>[BOOT_SEQUENCE_BYPASS]</span>
+        <span class="blink">LOADING_CORE...</span>
+      </div>
+      <div class="boot-text" id="bootText"></div>
+    </div>
+
+    <!-- Terminal Principal -->
+    <div class="terminal-container crt-box hidden" id="mainTerminal">
+      <div class="terminal-topbar">
+        <span class="sys-id">SYS_ID: 984-ALPHA</span>
+        <span class="sys-status" id="sysStatusLabel">ESTADO: ONLINE</span>
+      </div>
+
+      <div class="header-tag">[ PROYECTO ESCOLAR - CÁPSULA DEL TIEMPO ]</div>
+      <h1 id="mainTitle">DECODIFICADOR DE ERAS</h1>
+      <p class="sub-header" id="subHeader">PROCESANDO SECUENCIA TEMPORAL</p>
+
+      <div class="decrypt-display crt-box" id="decryptText">
+        INICIALIZANDO...
+      </div>
+
+      <div class="progress-box crt-box">
+        <div class="progress-bar" id="progressBar"></div>
+      </div>
+      <div class="percentage-text" id="percentText">PROGRESO DE DESBLOQUEO: 0%</div>
+
+      <div id="timerDisplay" class="timer-box">
+        TIEMPO RESTANTE: --D --H --M --S
+      </div>
+
+      <!-- Consola de comandos -->
+      <div class="console-section crt-box" id="consoleSection">
+        <p class="console-label">> INGRESE LA CLAVE REVELADA:</p>
+        <div class="input-row">
+          <span class="prompt-symbol">></span>
+          <input type="password" id="passInput" placeholder="Esperando descifrado..." autocomplete="off" spellcheck="false">
+          <button id="submitBtn" class="gf-button small">INGRESAR</button>
+        </div>
+        <div id="consoleStatus" class="console-status"></div>
+      </div>
+
+      <!-- Panel Post-Desbloqueo -->
+      <div class="unlocked-panel crt-box hidden" id="unlockedPanel">
+        <div class="unlocked-badge">✓ ACCESO TOTAL AUTORIZADO</div>
+        <h2 class="unlocked-title">CÁPSULA TEMPORAL DESBLOQUEADA</h2>
+        <p class="unlocked-desc">Puedes volver a explorar los artefactos 3D o apagar la terminal de forma segura.</p>
+        
+        <div class="unlocked-actions">
+          <button class="gf-button primary-btn" id="reopenTimelineBtn">
+            [ 📜 EXPLORAR LÍNEA DEL TIEMPO 3D ]
+          </button>
+        </div>
+      </div>
+
+      <div class="terminal-footer">
+        <button class="gf-button" id="audioToggle">🔊 AUDIO: ON</button>
+        <button class="power-off-small-btn global-power-off" title="Apagar el sistema">
+          [ ⏻ APAGAR ]
+        </button>
+      </div>
+    </div>
+
+    <!-- MÓDULO DE MODELOS 3D // TIMELINE SPLIT (10 ARTEFACTOS) -->
+    <div class="models-overlay hidden" id="modelsOverlay">
+      <div class="timeline-wrapper">
+        
+        <div class="models-header-bar crt-box">
+          <div class="left-badges">
+            <span class="badge-live">● CÁPSULA ABIERTA</span>
+            <span class="badge-tech">TIMELINE_SPLIT_v2.0</span>
+          </div>
+          <div class="right-top-actions">
+            <button class="gf-button back-btn" id="backToMenuBtn">
+              [ ◄ VOLVER AL MENÚ ]
+            </button>
+            <button class="power-off-small-btn global-power-off">
+              [ ⏻ APAGAR ]
+            </button>
+          </div>
+        </div>
+
+        <div class="timeline-title-section crt-box">
+          <h2>LÍNEA DEL TIEMPO: EVOLUCIÓN TECNOLÓGICA</h2>
+          <p class="models-subtitle">
+            Desplázate hacia abajo para explorar la transición. Haz <span class="highlight">clic</span> en los modelos activos para analizar el impacto histórico.
+          </p>
+        </div>
+
+        <div class="timeline-container">
+          <div class="timeline-axis"></div>
+
+          <div class="timeline-column-header left-header">
+            <span>◄ ERA DEL PASADO</span>
+          </div>
+          <div class="timeline-column-header right-header">
+            <span>ERA DEL FUTURO ►</span>
+          </div>
+
+          <!-- PAR 1: TELEFONÍA MÓVIL (ACTIVO) -->
+          <div class="timeline-row scroll-reveal">
+            <div class="timeline-card left-card model-card crt-box" id="cardBb">
+              <div class="card-header">
+                <span class="card-tag">PASADO // 2000s</span>
+                <span class="card-id">REG_01</span>
+              </div>
+              <h3>BLACKBERRY</h3>
+              <div class="viewer-wrapper crt-box">
+                <div class="scanner-line"></div>
+                <div class="tooltip-badge">💡 CLIC: ANALIZAR ERA</div>
+                <model-viewer id="mvBb" src="blackberry.glb" alt="BlackBerry 3D" auto-rotate camera-controls disable-zoom disable-pan interaction-prompt="none" field-of-view="30deg" shadow-intensity="1"></model-viewer>
+              </div>
+              <div class="card-info-footer">
+                <p class="model-desc">Mensajería instantánea y teclado QWERTY físico.</p>
+              </div>
+            </div>
+
+            <div class="timeline-card right-card model-card crt-box" id="cardSmart">
+              <div class="card-header">
+                <span class="card-tag">FUTURO // AHORA</span>
+                <span class="card-id">REG_02</span>
+              </div>
+              <h3>SMARTPHONE</h3>
+              <div class="viewer-wrapper crt-box">
+                <div class="scanner-line"></div>
+                <div class="tooltip-badge">💡 CLIC: ANALIZAR ERA</div>
+                <model-viewer id="mvSmart" src="smartphone.glb" alt="Smartphone 3D" auto-rotate camera-controls disable-zoom disable-pan interaction-prompt="none" field-of-view="30deg" shadow-intensity="1"></model-viewer>
+              </div>
+              <div class="card-info-footer">
+                <p class="model-desc">Cristal capacitivo multitáctil e Inteligencia Artificial.</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- PAR 2: REG_03 & REG_04 -->
+          <div class="timeline-row scroll-reveal">
+            <div class="timeline-card left-card locked-card crt-box">
+              <div class="card-header"><span class="card-tag">PASADO</span><span class="card-id">REG_03</span></div>
+              <div class="locked-box"><div class="lock-icon">🔒</div><p class="locked-title">[ ARTEFACTO #03 BLOQUEADO ]</p></div>
+            </div>
+            <div class="timeline-card right-card locked-card crt-box">
+              <div class="card-header"><span class="card-tag">FUTURO</span><span class="card-id">REG_04</span></div>
+              <div class="locked-box"><div class="lock-icon">🔒</div><p class="locked-title">[ ARTEFACTO #04 BLOQUEADO ]</p></div>
+            </div>
+          </div>
+
+          <!-- PAR 3: REG_05 & REG_06 -->
+          <div class="timeline-row scroll-reveal">
+            <div class="timeline-card left-card locked-card crt-box">
+              <div class="card-header"><span class="card-tag">PASADO</span><span class="card-id">REG_05</span></div>
+              <div class="locked-box"><div class="lock-icon">🔒</div><p class="locked-title">[ ARTEFACTO #05 BLOQUEADO ]</p></div>
+            </div>
+            <div class="timeline-card right-card locked-card crt-box">
+              <div class="card-header"><span class="card-tag">FUTURO</span><span class="card-id">REG_06</span></div>
+              <div class="locked-box"><div class="lock-icon">🔒</div><p class="locked-title">[ ARTEFACTO #06 BLOQUEADO ]</p></div>
+            </div>
+          </div>
+
+          <!-- PAR 4: REG_07 & REG_08 -->
+          <div class="timeline-row scroll-reveal">
+            <div class="timeline-card left-card locked-card crt-box">
+              <div class="card-header"><span class="card-tag">PASADO</span><span class="card-id">REG_07</span></div>
+              <div class="locked-box"><div class="lock-icon">🔒</div><p class="locked-title">[ ARTEFACTO #07 BLOQUEADO ]</p></div>
+            </div>
+            <div class="timeline-card right-card locked-card crt-box">
+              <div class="card-header"><span class="card-tag">FUTURO</span><span class="card-id">REG_08</span></div>
+              <div class="locked-box"><div class="lock-icon">🔒</div><p class="locked-title">[ ARTEFACTO #08 BLOQUEADO ]</p></div>
+            </div>
+          </div>
+
+          <!-- PAR 5: REG_09 & REG_10 -->
+          <div class="timeline-row scroll-reveal">
+            <div class="timeline-card left-card locked-card crt-box">
+              <div class="card-header"><span class="card-tag">PASADO</span><span class="card-id">REG_09</span></div>
+              <div class="locked-box"><div class="lock-icon">🔒</div><p class="locked-title">[ ARTEFACTO #09 BLOQUEADO ]</p></div>
+            </div>
+            <div class="timeline-card right-card locked-card crt-box">
+              <div class="card-header"><span class="card-tag">FUTURO</span><span class="card-id">REG_10</span></div>
+              <div class="locked-box"><div class="lock-icon">🔒</div><p class="locked-title">[ ARTEFACTO #10 BLOQUEADO ]</p></div>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Modal Informativo -->
+    <div class="info-modal hidden" id="infoModal">
+      <div class="info-content crt-box">
+        <span class="close-info" id="closeInfo">&times;</span>
+        <div class="info-header-tag" id="infoHeaderTag">[ ANALISIS ACADÉMICO DE ERA ]</div>
+        <h4 id="infoTitle">TÍTULO DEL MODELO</h4>
+        <div class="info-body">
+          <div class="info-section">
+            <span class="sec-title" id="infoLabel1">► ¿CÓMO SE USABA Y QUÉ SUSTITUYÓ?</span>
+            <p id="infoWhyUse">--</p>
+          </div>
+          <hr class="info-divider">
+          <div class="info-section">
+            <span class="sec-title" id="infoLabel2">► MOTIVACIÓN DE LA EVOLUCIÓN HISTÓRICA:</span>
+            <p id="infoWhyChange">--</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
