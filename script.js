@@ -60,22 +60,22 @@ const datosModelos = {
 };
 
 let audioActivado = true;
-let bootFinalizado = false; // CONTROL DE ESPERA PARA EL REVELADO
+let bootFinalizado = false;
 
-// AUDIOS
+// AUDIOS (RUTAS APUNTANDO A LA CARPETA 'sonido/')
 const audios = {
-  tvOn: new Audio("crt_tv_on.mp3"),
-  tvOff: new Audio("crt_tv_off.mp3"),
-  estatica: new Audio("estatica.mp3"),
-  musica: new Audio("musica.mp3"),
-  typing: new Audio("typing.mp3"),
-  tick: new Audio("tick.mp3"),
-  revealChar: new Audio("reveal_char.mp3"),
-  modelClick: new Audio("model_click.mp3"),
-  granted: new Audio("granted.mp3"),
-  wrong: new Audio("wrong.mp3"),
-  glitch: new Audio("glitch.mp3"),
-  dudin: new Audio("dudin.mp3") // <-- NUEVO AUDIO 8-BIT
+  tvOn: new Audio("sonido/crt_tv_on.mp3"),
+  tvOff: new Audio("sonido/crt_tv_off.mp3"),
+  estatica: new Audio("sonido/estatica.mp3"),
+  musica: new Audio("sonido/musica.mp3"),
+  typing: new Audio("sonido/typing.mp3"),
+  tick: new Audio("sonido/tick.mp3"),
+  revealChar: new Audio("sonido/reveal_char.mp3"),
+  modelClick: new Audio("sonido/model_click.mp3"),
+  granted: new Audio("sonido/granted.mp3"),
+  wrong: new Audio("sonido/wrong.mp3"),
+  glitch: new Audio("sonido/glitch.mp3"),
+  dudin: new Audio("sonido/dudin.mp3")
 };
 
 audios.dudin.volume = 0.50;
@@ -86,7 +86,7 @@ audios.typing.volume = 0.45; audios.tick.volume = 0.20;
 audios.revealChar.volume = 0.35; audios.modelClick.volume = 0.40;
 audios.wrong.volume = 0.40; audios.granted.volume = 0.50; audios.glitch.volume = 0.55;
 
-audios.tvOn.load(); audios.tvOff.load(); audios.revealChar.load(); audios.modelClick.load();
+audios.tvOn.load(); audios.tvOff.load(); audios.revealChar.load(); audios.modelClick.load(); audios.dudin.load();
 
 let intervalVolumen = null;
 function cambiarVolumenSuave(audioObj, volumenObjetivo, duracionMs = 500) {
@@ -133,7 +133,6 @@ function animacionBoot() {
       bootScreen.classList.add("fade-out");
       setTimeout(() => { 
         mainTerminal.classList.add("visible"); 
-        // Marcamos que el boot terminó y damos 1.5s de pausa cinemática antes del descifrado
         setTimeout(() => { bootFinalizado = true; }, 1500);
       }, 50);
       setTimeout(() => { bootScreen.classList.add("hidden"); }, 800);
@@ -201,7 +200,6 @@ function iniciarReveladoSecuencial() {
     if (caracteresReveladosFinales >= claveReal.length) {
       clearInterval(intervalRevelado);
       decryptText.innerText = `CLAVE: ${claveReal}`;
-      // Animación brillante al completar el desbloqueo
       decryptText.classList.add("key-unlocked-glow");
     }
   }, 350);
@@ -254,12 +252,10 @@ function verificarClave() {
   const password = passInput.value.trim().toUpperCase();
 
   if (password === "P28!") {
-    // Si la fecha objetivo AÚN NO se ha cumplido y NO están en Modo Demo
     const ahora = new Date().getTime();
     const tiempoRestante = fechaObjetivo - ahora;
 
     if (tiempoRestante > 0 && !modoDemoActivo) {
-      // TROLLEO A LOS COMPAÑEROS QUE SE SABEN LA CLAVE
       consoleStatus.innerText = ">> SABES EL SECRETO, PERO AÚN NO ES TIEMPO...";
       
       if (audioActivado) {
@@ -269,18 +265,16 @@ function verificarClave() {
         audios.dudin.play().catch(() => {});
       }
 
-      // Pequeño parpadeo en el panel
       mainTerminal.classList.add("glitch-shake");
       setTimeout(() => { mainTerminal.classList.remove("glitch-shake"); }, 400);
       return;
     }
 
-    // SI YA LLEGÓ A CERO O ESTÁ EN MODO DEMO "bill"
     intentosFallidos = 0;
     consoleStatus.innerText = ">> ACCESO CONCEDIDO: MATERIALIZANDO ARTEFACTOS...";
     
     if (audioActivado) {
-      audios.wrong.pause(); audios.glitch.pause();
+      audios.wrong.pause(); audios.glitch.pause(); audios.dudin.pause();
       audios.granted.currentTime = 0; audios.granted.play().catch(() => {});
     }
 
@@ -293,7 +287,6 @@ function verificarClave() {
     abrirTimeline();
 
   } else {
-    // CLAVE INCORRECTA
     intentosFallidos++;
     if (intentosFallidos >= 3) {
       consoleStatus.innerText = ">> ¡ALERTA DE SEGURIDAD! SOBRECARGA EN EL SISTEMA.";
@@ -361,6 +354,7 @@ modelsOverlay.addEventListener("scroll", checkScrollReveal);
 
 function configurarInteraccionClick(elementId, datosClave) {
   const viewer = document.getElementById(elementId);
+  if (!viewer) return;
   let startX = 0; let startY = 0;
 
   viewer.addEventListener("pointerdown", (e) => {
@@ -439,7 +433,6 @@ function actualizarContador() {
     percentText.innerText = "PROGRESO DE DESBLOQUEO: 100%";
     timerDisplay.innerText = "TIEMPO RESTANTE: 00D 00H 00M 00S";
     
-    // Solo inicia la secuencia de sonido e interacción una vez que el BOOT ha terminado
     if (bootFinalizado) {
       iniciarReveladoSecuencial();
       decryptText.innerText = `CLAVE: ${obtenerTextoMatrizORevelado()}`;
@@ -467,7 +460,7 @@ function actualizarContador() {
 
 setInterval(actualizarContador, 80);
 
-// DETECTOR DE TECLAS "bill" CON SHAKE EXTRA
+// DETECTOR DE TECLAS "bill"
 let secuenciaTeclas = "";
 window.addEventListener("keydown", (e) => {
   secuenciaTeclas += e.key.toLowerCase();
@@ -490,13 +483,11 @@ function activarModoDemo() {
     audios.glitch.play().catch(() => {});
   }
 
-  // EFECTO DE SHAKE EN PANTALLA COMPLETA
   mainTerminal.classList.add("bill-shake-effect");
   setTimeout(() => {
     mainTerminal.classList.remove("bill-shake-effect");
   }, 600);
 
-  // DESTELLO AMARILLO EN PANTALLA
   const flash = document.createElement("div");
   flash.style.position = "fixed";
   flash.style.top = "0";
