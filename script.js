@@ -1,5 +1,5 @@
 // CONFIGURACIÓN DEL SIMULACRO
-const fechaObjetivo = new Date("October 5, 2026 22:13:00").getTime();
+const fechaObjetivo = new Date("September 27, 2027 12:00:00").getTime();
 const claveReal = "P28!";
 const caracteresEspeciales = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()_+-=[]{}|;:,.<>?";
 
