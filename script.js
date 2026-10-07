@@ -576,3 +576,12 @@ function activarModoDemo() {
     setTimeout(() => { flash.remove(); }, 400);
   }, 100);
 }
+// EFECTO DE SONIDO AL PASAR EL CURSOR POR LAS TARJETAS 3D
+document.querySelectorAll(".model-card").forEach(card => {
+  card.addEventListener("mouseenter", () => {
+    if (audioActivado) {
+      audios.tick.currentTime = 0;
+      audios.tick.play().catch(() => {});
+    }
+  });
+});
