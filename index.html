@@ -74,12 +74,17 @@
         TIME REMAINING: --D --H --M --S
       </div>
 
-      <!-- Command Console -->
+      <!-- Command Console (4-Digit Code Slots) -->
       <div class="console-section crt-box" id="consoleSection">
-        <p class="console-label">> ENTER REVEALED PASSCODE:</p>
-        <div class="input-row">
+        <p class="console-label">> ENTER REVEALED PASSCODE [4 CHARS]:</p>
+        <div class="input-row pin-wrapper">
           <span class="prompt-symbol">></span>
-          <input type="password" id="passInput" placeholder="Awaiting decryption..." autocomplete="off" spellcheck="false">
+          <div class="passcode-boxes">
+            <input type="text" maxlength="1" class="pin-box crt-box" id="pin1" autocomplete="off" spellcheck="false" autofocus>
+            <input type="text" maxlength="1" class="pin-box crt-box" id="pin2" autocomplete="off" spellcheck="false">
+            <input type="text" maxlength="1" class="pin-box crt-box" id="pin3" autocomplete="off" spellcheck="false">
+            <input type="text" maxlength="1" class="pin-box crt-box" id="pin4" autocomplete="off" spellcheck="false">
+          </div>
           <button id="submitBtn" class="gf-button small">ENTER</button>
         </div>
         <div id="consoleStatus" class="console-status"></div>
@@ -247,23 +252,37 @@
       </div>
     </div>
 
-    <!-- Info Modal -->
+    <!-- Info Modal Ampliado con Visor 3D Interactivo -->
     <div class="info-modal hidden" id="infoModal">
+      <div class="info-modal-backdrop"></div>
       <div class="info-content crt-box">
         <span class="close-info" id="closeInfo">&times;</span>
-        <div class="info-header-tag" id="infoHeaderTag">[ ACADEMIC ERA ANALYSIS ]</div>
-        <h4 id="infoTitle">MODEL TITLE</h4>
-        <div class="info-body">
-          <div class="info-section">
-            <span class="sec-title" id="infoLabel1">► HOW WAS IT USED & WHAT DID IT REPLACE?</span>
-            <p id="infoWhyUse">--</p>
-          </div>
-          <hr class="info-divider">
-          <div class="info-section">
-            <span class="sec-title" id="infoLabel2">► HISTORICAL EVOLUTION DRIVER:</span>
-            <p id="infoWhyChange">--</p>
+        
+        <!-- LADO IZQUIERDO: MODELO 3D EN GRANDE -->
+        <div class="modal-3d-side">
+          <div class="viewer-wrapper modal-viewer-box crt-box">
+            <div class="scanner-line"></div>
+            <model-viewer id="modal3dViewer" src="" alt="3D Detailed View" auto-rotate camera-controls disable-zoom disable-pan interaction-prompt="none" field-of-view="30deg" shadow-intensity="1.5"></model-viewer>
           </div>
         </div>
+
+        <!-- LADO DERECHO: TEXTO EXPLICATIVO -->
+        <div class="modal-text-side">
+          <div class="info-header-tag" id="infoHeaderTag">[ ACADEMIC ERA ANALYSIS ]</div>
+          <h4 id="infoTitle">MODEL TITLE</h4>
+          <div class="info-body">
+            <div class="info-section">
+              <span class="sec-title" id="infoLabel1">► HOW WAS IT USED & WHAT DID IT REPLACE?</span>
+              <p id="infoWhyUse">--</p>
+            </div>
+            <hr class="info-divider">
+            <div class="info-section">
+              <span class="sec-title" id="infoLabel2">► HISTORICAL EVOLUTION DRIVER:</span>
+              <p id="infoWhyChange">--</p>
+            </div>
+          </div>
+        </div>
+
       </div>
     </div>
 
