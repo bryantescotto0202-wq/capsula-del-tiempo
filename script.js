@@ -1,9 +1,9 @@
-// CONFIGURACIÓN DEL SIMULACRO
+// SIMULATION SETTINGS
 const fechaObjetivo = new Date("September 27, 2027 12:00:00").getTime();
 const claveReal = "P28!";
 const caracteresEspeciales = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()_+-=[]{}|;:,.<>?";
 
-// DOM
+// DOM ELEMENTS
 const decryptText = document.getElementById("decryptText");
 const progressBar = document.getElementById("progressBar");
 const percentText = document.getElementById("percentText");
@@ -30,7 +30,7 @@ const subHeader = document.getElementById("subHeader");
 const powerOffScreen = document.getElementById("powerOffScreen");
 const appContainer = document.getElementById("appContainer");
 
-// Modal
+// Modal Elements
 const infoModal = document.getElementById("infoModal");
 const infoHeaderTag = document.getElementById("infoHeaderTag");
 const infoTitle = document.getElementById("infoTitle");
@@ -42,27 +42,75 @@ const closeInfo = document.getElementById("closeInfo");
 
 const datosModelos = {
   blackberry: {
-    tag: "[ REGISTRO CÁPSULA // ERA PASADO: 2000s ]",
-    titulo: "NUCLEO: ERA TECLADO QWERTY & BBM",
-    label1: "► ¿CÓMO SE USABA Y QUÉ TECNOLOGÍA SUSTITUYÓ?",
-    porqueUso: "Reemplazó a las cabinas públicas, pagers y teclados numéricos T9. Permitió redactar correos completos y mensajes instantáneos encriptados (BBM) fuera de la oficina.",
-    label2: "► MOTIVACIÓN DE LA EVOLUCIÓN TECNOLÓGICA:",
-    porqueChange: "El teclado físico ocupaba el 50% de la pantalla. Al surgir el consumo de video y tiendas de apps, la sociedad demandó pantallas completas y dinámicas."
+    tag: "[ CAPSULE RECORD // PAST ERA: 2000s ]",
+    titulo: "CORE: QWERTY KEYBOARD & BBM ERA",
+    label1: "► HOW WAS IT USED & WHAT DID IT REPLACE?",
+    porqueUso: "Replaced public payphones, pagers, and T9 numeric keypads. Enabled writing full emails and encrypted instant messages (BBM) on the go.",
+    label2: "► HISTORICAL EVOLUTION DRIVER:",
+    porqueChange: "The physical keyboard took up 50% of the screen. With the rise of video streaming and app stores, society demanded full, dynamic touch displays."
   },
   smartphone: {
-    tag: "[ REGISTRO CÁPSULA // ERA FUTURO: AHORA ]",
-    titulo: "NUCLEO: ERA CRISTAL CAPACITIVO & IA",
-    label1: "► ¿CÓMO SE USA Y QUÉ TECNOLOGÍA SUSTITUYÓ?",
-    porqueUso: "Sustituyó a los teclados físicos, cámaras compactas, GPS independientes y reproductores MP3 en un solo cristal multitáctil.",
-    label2: "► MOTIVACIÓN DE LA EVOLUCIÓN TECNOLÓGICA:",
-    porqueChange: "Impulsado por la necesidad de procesamiento multimedia e inteligencia artificial autónoma en la palma de la mano."
+    tag: "[ CAPSULE RECORD // FUTURE ERA: NOW ]",
+    titulo: "CORE: CAPACITIVE GLASS & AI ERA",
+    label1: "► HOW IS IT USED & WHAT DID IT REPLACE?",
+    porqueUso: "Replaced physical keyboards, compact cameras, standalone GPS units, and MP3 players into a single multi-touch glass surface.",
+    label2: "► HISTORICAL EVOLUTION DRIVER:",
+    porqueChange: "Driven by the need for high-speed multimedia processing and autonomous artificial intelligence directly in the palm of your hand."
+  },
+  mouseWired: {
+    tag: "[ CAPSULE RECORD // PAST ERA: 1990s-2000s ]",
+    titulo: "CORE: WIRED MOUSE & CABLE CONSTRAINT",
+    label1: "► HOW WAS IT USED & WHAT DID IT REPLACE?",
+    porqueUso: "Replaced keyboard command prompts with direct graphic interface (GUI) navigation via physical cord and internal tracking mechanics.",
+    label2: "► HISTORICAL EVOLUTION DRIVER:",
+    porqueChange: "Cables caused desk clutter and physical movement limits. Users demanded seamless wireless freedom, high-DPI optical precision, and portability."
+  },
+  mouseWireless: {
+    tag: "[ CAPSULE RECORD // FUTURE ERA: NOW ]",
+    titulo: "CORE: WIRELESS OPTICAL & ERGONOMIC ERA",
+    label1: "► HOW IS IT USED & WHAT DID IT REPLACE?",
+    porqueUso: "Replaced tethered wired mice using 2.4GHz radio frequency, Bluetooth link, high-precision invisible optical sensors, and lithium batteries.",
+    label2: "► HISTORICAL EVOLUTION DRIVER:",
+    porqueChange: "Driven by modern remote work setups, mobile laptops, and the necessity for instant multi-device switching without cable drag."
+  },
+  wiredHeadphones: {
+    tag: "[ CAPSULE RECORD // PAST ERA: 2000s ]",
+    titulo: "CORE: 3.5mm ANALOG AUDIO JACK ERA",
+    label1: "► HOW WAS IT USED & WHAT DID IT REPLACE?",
+    porqueUso: "Replaced bulky speaker systems for private audio listening using copper wiring and standard 3.5mm analog headphone jacks.",
+    label2: "► HISTORICAL EVOLUTION DRIVER:",
+    porqueChange: "Wires tangled easily and restricted movement. Smartphone manufacturers removed physical headphone jacks to make devices waterproof and slimmer."
+  },
+  airpods: {
+    tag: "[ CAPSULE RECORD // FUTURE ERA: NOW ]",
+    titulo: "CORE: TWS & ACTIVE NOISE CANCELING",
+    label1: "► HOW IS IT USED & WHAT DID IT REPLACE?",
+    porqueUso: "Replaced wired earphones with True Wireless Stereo (TWS), spatial audio algorithms, smart touch gestures, and charging carrying cases.",
+    label2: "► HISTORICAL EVOLUTION DRIVER:",
+    porqueChange: "Powered by Bluetooth audio codecs, micro-battery density, and AI beamforming microphones for crystal-clear hands-free calls."
+  },
+  dvd: {
+    tag: "[ CAPSULE RECORD // PAST ERA: 2000s ]",
+    titulo: "CORE: OPTICAL DISC & DVD-ROM ERA",
+    label1: "► HOW WAS IT USED & WHAT DID IT REPLACE?",
+    porqueUso: "Replaced magnetic VHS tapes and low-capacity Floppy Discs with laser-read optical media storing up to 4.7 GB of video and data.",
+    label2: "► HISTORICAL EVOLUTION DRIVER:",
+    porqueChange: "Discs were prone to scratches, slow read speeds, and physical loss. Computers abandoned mechanical optical drives to reduce size."
+  },
+  usbDrive: {
+    tag: "[ CAPSULE RECORD // FUTURE ERA: NOW ]",
+    titulo: "CORE: FLASH MEMORY & CLOUD SYNC ERA",
+    label1: "► HOW IS IT USED & WHAT DID IT REPLACE?",
+    porqueUso: "Replaced optical DVDs and CDs with solid-state flash memory, ultra-fast USB-C transfer speeds, and instant internet cloud sync.",
+    label2: "► HISTORICAL EVOLUTION DRIVER:",
+    porqueChange: "Required for moving massive 4K video files, instant cross-platform compatibility, and wireless cloud accessibility anywhere on Earth."
   }
 };
 
 let audioActivado = true;
 let bootFinalizado = false;
 
-// AUDIOS (RUTAS APUNTANDO A LA CARPETA 'sonido/')
+// AUDIOS (RUTAS A LA CARPETA 'sonido/')
 const audios = {
   tvOn: new Audio("sonido/crt_tv_on.mp3"),
   tvOff: new Audio("sonido/crt_tv_off.mp3"),
@@ -79,7 +127,6 @@ const audios = {
 };
 
 audios.dudin.volume = 0.50;
-
 audios.estatica.loop = true; audios.estatica.volume = 0.08;
 audios.musica.loop = true; audios.musica.volume = 0.22;
 audios.typing.volume = 0.45; audios.tick.volume = 0.20;
@@ -172,7 +219,6 @@ passInput.addEventListener("input", () => {
   }
 });
 
-// REVELACIÓN SECUENCIAL Y LLAMATIVA
 let revelandoFinal = false;
 let caracteresReveladosFinales = 0;
 
@@ -199,7 +245,7 @@ function iniciarReveladoSecuencial() {
 
     if (caracteresReveladosFinales >= claveReal.length) {
       clearInterval(intervalRevelado);
-      decryptText.innerText = `CLAVE: ${claveReal}`;
+      decryptText.innerText = `PASSCODE: ${claveReal}`;
       decryptText.classList.add("key-unlocked-glow");
     }
   }, 350);
@@ -214,17 +260,27 @@ function obtenerTextoMatrizORevelado() {
   return resultado;
 }
 
-// MATRIX OVERLAY
+// SECUENCIA CINEMÁTICA DE CARGA MATRIX PARA EVITAR LAG EN 3D
 let matrixInterval;
+const fasesCarga = [
+  ">> INITIALIZING 3D ENGINE PIPELINE...",
+  ">> DECOMPRESSING GLTF MESH GEOMETRY...",
+  ">> STABILIZING SHADERS & LIGHTING...",
+  ">> MATERIALIZING TEMPORAL TIMELINE..."
+];
+
 function iniciarEfectoMatrix() {
   matrixOverlay.classList.remove("hidden");
+  let contadorFase = 0;
+  
   matrixInterval = setInterval(() => {
-    let randStr = ">> DECRYPTING: ";
+    let randStr = `${fasesCarga[Math.floor(contadorFase / 15) % fasesCarga.length]}\n`;
     for (let i = 0; i < 24; i++) {
       randStr += caracteresEspeciales.charAt(Math.floor(Math.random() * caracteresEspeciales.length));
     }
     matrixOverlay.innerText = randStr;
-  }, 50);
+    contadorFase++;
+  }, 40);
 }
 
 function detenerEfectoMatrix() {
@@ -236,16 +292,22 @@ let intentosFallidos = 0;
 
 function abrirTimeline() {
   if (audioActivado) { cambiarVolumenSuave(audios.musica, 0.05, 600); }
+  
   iniciarEfectoMatrix();
 
+  // Precarga fluida en segundo plano
+  modelsOverlay.classList.remove("hidden");
+  modelsOverlay.style.opacity = "0";
+
+  // Transición de 2.2 segundos para asegurar renderizado 3D sin lagazos
   setTimeout(() => {
     detenerEfectoMatrix();
-    modelsOverlay.classList.remove("hidden");
+    modelsOverlay.style.opacity = "";
     requestAnimationFrame(() => {
       modelsOverlay.classList.add("active");
       checkScrollReveal();
     });
-  }, 650);
+  }, 2200);
 }
 
 function verificarClave() {
@@ -256,7 +318,7 @@ function verificarClave() {
     const tiempoRestante = fechaObjetivo - ahora;
 
     if (tiempoRestante > 0 && !modoDemoActivo) {
-      consoleStatus.innerText = ">> SABES EL SECRETO, PERO AÚN NO ES TIEMPO...";
+      consoleStatus.innerText = ">> YOU KNOW THE SECRET, BUT IT IS NOT TIME YET...";
       
       if (audioActivado) {
         audios.wrong.pause();
@@ -271,7 +333,7 @@ function verificarClave() {
     }
 
     intentosFallidos = 0;
-    consoleStatus.innerText = ">> ACCESO CONCEDIDO: MATERIALIZANDO ARTEFACTOS...";
+    consoleStatus.innerText = ">> ACCESS GRANTED: MATERIALIZING ARTIFACTS...";
     
     if (audioActivado) {
       audios.wrong.pause(); audios.glitch.pause(); audios.dudin.pause();
@@ -280,16 +342,16 @@ function verificarClave() {
 
     consoleSection.classList.add("hidden");
     unlockedPanel.classList.remove("hidden");
-    sysStatusLabel.innerText = "ESTADO: DESBLOQUEADO";
-    mainTitle.innerText = "SISTEMA CÁPSULA TEMPORAL";
-    subHeader.innerText = "EVOLUCIÓN TECNOLÓGICA REGISTRADA";
+    sysStatusLabel.innerText = "STATUS: UNLOCKED";
+    mainTitle.innerText = "TIME CAPSULE SYSTEM";
+    subHeader.innerText = "TECHNOLOGICAL EVOLUTION LOGGED";
 
     abrirTimeline();
 
   } else {
     intentosFallidos++;
     if (intentosFallidos >= 3) {
-      consoleStatus.innerText = ">> ¡ALERTA DE SEGURIDAD! SOBRECARGA EN EL SISTEMA.";
+      consoleStatus.innerText = ">> SECURITY ALERT! SYSTEM OVERLOAD.";
       if (audioActivado) {
         audios.wrong.pause();
         audios.glitch.currentTime = 0; audios.glitch.play().catch(() => {});
@@ -297,7 +359,7 @@ function verificarClave() {
       mainTerminal.classList.add("glitch-shake");
       setTimeout(() => { mainTerminal.classList.remove("glitch-shake"); }, 450);
     } else {
-      consoleStatus.innerText = `>> CLAVE INCORRECTA. INTENTO [${intentosFallidos}/3].`;
+      consoleStatus.innerText = `>> INVALID PASSCODE. ATTEMPT [${intentosFallidos}/3].`;
       if (audioActivado) {
         audios.wrong.currentTime = 0; audios.wrong.play().catch(() => {});
       }
@@ -382,8 +444,15 @@ function mostrarDatoCurioso(datos) {
   }
 }
 
+// CONFIGURACIÓN DE CLICS DE LOS 8 MODELOS
 configurarInteraccionClick("mvBb", datosModelos.blackberry);
 configurarInteraccionClick("mvSmart", datosModelos.smartphone);
+configurarInteraccionClick("mvMouseWired", datosModelos.mouseWired);
+configurarInteraccionClick("mvMouseWireless", datosModelos.mouseWireless);
+configurarInteraccionClick("mvWiredAudio", datosModelos.wiredHeadphones);
+configurarInteraccionClick("mvAirpods", datosModelos.airpods);
+configurarInteraccionClick("mvDvd", datosModelos.dvd);
+configurarInteraccionClick("mvUsb", datosModelos.usbDrive);
 
 closeInfo.addEventListener("click", () => { infoModal.classList.add("hidden"); });
 
@@ -398,7 +467,7 @@ audioToggle.addEventListener("click", () => {
   }
 });
 
-// CONTROL DE CONTADOR Y PROGRESO DE LA BARRA
+// COUNTDOWN & PROGRESS BAR CONTROLLER
 let modoDemoActivo = false;
 let progresoDemo = 0;
 
@@ -409,35 +478,35 @@ function actualizarContador() {
       if (progresoDemo > 100) progresoDemo = 100;
 
       progressBar.style.width = `${progresoDemo}%`;
-      percentText.innerText = `PROGRESO DE DESBLOQUEO: ${progresoDemo}%`;
-      decryptText.innerText = `CLAVE: ${generarTextoAleatorio(4)}`;
-      timerDisplay.innerText = `TIEMPO RESTANTE: 00D 00H 00M 0${Math.max(0, 5 - Math.floor(progresoDemo / 20))}S`;
+      percentText.innerText = `DECRYPTION PROGRESS: ${progresoDemo}%`;
+      decryptText.innerText = `PASSCODE: ${generarTextoAleatorio(4)}`;
+      timerDisplay.innerText = `TIME REMAINING: 00D 00H 00M 0${Math.max(0, 5 - Math.floor(progresoDemo / 20))}S`;
 
       if (audioActivado) {
         audios.tick.currentTime = 0; audios.tick.play().catch(() => {});
       }
     } else {
-      timerDisplay.innerText = "TIEMPO RESTANTE: 00D 00H 00M 00S";
+      timerDisplay.innerText = "TIME REMAINING: 00D 00H 00M 00S";
       iniciarReveladoSecuencial();
-      decryptText.innerText = `CLAVE: ${obtenerTextoMatrizORevelado()}`;
+      decryptText.innerText = `PASSCODE: ${obtenerTextoMatrizORevelado()}`;
     }
     return;
   }
 
-  // TIEMPO REAL
+  // REAL TIME
   const ahora = new Date().getTime();
   const diferencia = fechaObjetivo - ahora;
 
   if (diferencia <= 0) {
     progressBar.style.width = "100%";
-    percentText.innerText = "PROGRESO DE DESBLOQUEO: 100%";
-    timerDisplay.innerText = "TIEMPO RESTANTE: 00D 00H 00M 00S";
+    percentText.innerText = "DECRYPTION PROGRESS: 100%";
+    timerDisplay.innerText = "TIME REMAINING: 00D 00H 00M 00S";
     
     if (bootFinalizado) {
       iniciarReveladoSecuencial();
-      decryptText.innerText = `CLAVE: ${obtenerTextoMatrizORevelado()}`;
+      decryptText.innerText = `PASSCODE: ${obtenerTextoMatrizORevelado()}`;
     } else {
-      decryptText.innerText = `CLAVE: ${generarTextoAleatorio(4)}`;
+      decryptText.innerText = `PASSCODE: ${generarTextoAleatorio(4)}`;
     }
     return;
   }
@@ -447,20 +516,20 @@ function actualizarContador() {
   const minutos = Math.floor((diferencia % (1000 * 60 * 60)) / (1000 * 60));
   const segundos = Math.floor((diferencia % (1000 * 60)) / 1000);
 
-  timerDisplay.innerText = `TIEMPO RESTANTE: ${dias}D ${horas}H ${minutos}M ${segundos}S`;
+  timerDisplay.innerText = `TIME REMAINING: ${dias}D ${horas}H ${minutos}M ${segundos}S`;
 
   const unAnoEnMs = 365 * 24 * 60 * 60 * 1000;
   const tiempoTranscurrido = unAnoEnMs - (diferencia % unAnoEnMs);
   const progreso = Math.min(99, Math.max(0, Math.floor((tiempoTranscurrido / unAnoEnMs) * 100)));
   
   progressBar.style.width = `${progreso}%`;
-  percentText.innerText = `PROGRESO DE DESBLOQUEO: ${progreso}%`;
-  decryptText.innerText = `CLAVE: ${generarTextoAleatorio(4)}`;
+  percentText.innerText = `DECRYPTION PROGRESS: ${progreso}%`;
+  decryptText.innerText = `PASSCODE: ${generarTextoAleatorio(4)}`;
 }
 
 setInterval(actualizarContador, 80);
 
-// DETECTOR DE TECLAS "bill"
+// SECRET "bill" KEY DETECTOR
 let secuenciaTeclas = "";
 window.addEventListener("keydown", (e) => {
   secuenciaTeclas += e.key.toLowerCase();
