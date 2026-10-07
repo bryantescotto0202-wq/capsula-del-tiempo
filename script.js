@@ -9,7 +9,6 @@ const progressBar = document.getElementById("progressBar");
 const percentText = document.getElementById("percentText");
 const timerDisplay = document.getElementById("timerDisplay");
 const audioToggle = document.getElementById("audioToggle");
-const passInput = document.getElementById("passInput");
 const submitBtn = document.getElementById("submitBtn");
 const consoleStatus = document.getElementById("consoleStatus");
 const powerOverlay = document.getElementById("powerOverlay");
@@ -30,6 +29,14 @@ const subHeader = document.getElementById("subHeader");
 const powerOffScreen = document.getElementById("powerOffScreen");
 const appContainer = document.getElementById("appContainer");
 
+// PIN Input Elements
+const pinInputs = [
+  document.getElementById("pin1"),
+  document.getElementById("pin2"),
+  document.getElementById("pin3"),
+  document.getElementById("pin4")
+];
+
 // Modal Elements
 const infoModal = document.getElementById("infoModal");
 const infoHeaderTag = document.getElementById("infoHeaderTag");
@@ -39,6 +46,7 @@ const infoWhyUse = document.getElementById("infoWhyUse");
 const infoLabel2 = document.getElementById("infoLabel2");
 const infoWhyChange = document.getElementById("infoWhyChange");
 const closeInfo = document.getElementById("closeInfo");
+const modal3dViewer = document.getElementById("modal3dViewer");
 
 const datosModelos = {
   blackberry: {
@@ -110,7 +118,7 @@ const datosModelos = {
 let audioActivado = true;
 let bootFinalizado = false;
 
-// AUDIOS (RUTAS A LA CARPETA 'sonido/')
+// AUDIOS
 const audios = {
   tvOn: new Audio("sonido/crt_tv_on.mp3"),
   tvOff: new Audio("sonido/crt_tv_off.mp3"),
@@ -134,6 +142,13 @@ audios.revealChar.volume = 0.35; audios.modelClick.volume = 0.40;
 audios.wrong.volume = 0.40; audios.granted.volume = 0.50; audios.glitch.volume = 0.55;
 
 audios.tvOn.load(); audios.tvOff.load(); audios.revealChar.load(); audios.modelClick.load(); audios.dudin.load();
+
+// REPRODUCCIÓN SEGURA
+function reproducirSonido(audioObj) {
+  if (!audioActivado || !audioObj) return;
+  audioObj.currentTime = 0;
+  audioObj.play().catch(() => {});
+}
 
 let intervalVolumen = null;
 function cambiarVolumenSuave(audioObj, volumenObjetivo, duracionMs = 500) {
@@ -168,10 +183,7 @@ let lineaActual = 0;
 function animacionBoot() {
   if (lineaActual < lineasBoot.length) {
     bootText.innerText += lineasBoot[lineaActual] + "\n";
-    if (audioActivado) {
-      audios.typing.currentTime = 0;
-      audios.typing.play().catch(() => {});
-    }
+    reproducirSonido(audios.typing);
     lineaActual++;
     setTimeout(animacionBoot, 220);
   } else {
@@ -180,6 +192,7 @@ function animacionBoot() {
       bootScreen.classList.add("fade-out");
       setTimeout(() => { 
         mainTerminal.classList.add("visible"); 
+        pinInputs[0].focus();
         setTimeout(() => { bootFinalizado = true; }, 1500);
       }, 50);
       setTimeout(() => { bootScreen.classList.add("hidden"); }, 800);
@@ -194,12 +207,7 @@ powerBtn.addEventListener("click", () => {
   }
   requestAnimationFrame(() => {
     crtOverlay.classList.add("active");
-    setTimeout(() => {
-      if (audioActivado) {
-        audios.tvOn.currentTime = 0;
-        audios.tvOn.play().catch(() => {});
-      }
-    }, 320);
+    setTimeout(() => { reproducirSonido(audios.tvOn); }, 320);
     setTimeout(() => {
       crtOverlay.classList.remove("active");
       bootScreen.classList.remove("hidden");
@@ -212,11 +220,44 @@ powerBtn.addEventListener("click", () => {
   });
 });
 
-passInput.addEventListener("input", () => {
-  if (audioActivado) {
-    audios.typing.currentTime = 0;
-    audios.typing.play().catch(() => {});
-  }
+// LÓGICA DE LAS 4 CASILLAS DE CÓDIGO SECRETO
+pinInputs.forEach((input, index) => {
+  input.addEventListener("input", (e) => {
+    reproducirSonido(audios.typing);
+    const val = input.value;
+
+    if (val.length === 1 && index < pinInputs.length - 1) {
+      pinInputs[index + 1].focus();
+    }
+
+    const claveIngresada = pinInputs.map(i => i.value).join("");
+    if (claveIngresada.length === 4) {
+      verificarClave();
+    }
+  });
+
+  input.addEventListener("keydown", (e) => {
+    if (e.key === "Backspace" && !input.value && index > 0) {
+      pinInputs[index - 1].focus();
+    } else if (e.key === "Enter") {
+      verificarClave();
+    }
+  });
+
+  input.addEventListener("paste", (e) => {
+    e.preventDefault();
+    const pasted = (e.clipboardData || window.clipboardData).getData('text').trim();
+    if (pasted) {
+      for (let i = 0; i < 4; i++) {
+        if (pasted[i]) pinInputs[i].value = pasted[i];
+      }
+      if (pinInputs.map(i => i.value).join("").length === 4) {
+        verificarClave();
+      } else {
+        pinInputs[Math.min(pasted.length, 3)].focus();
+      }
+    }
+  });
 });
 
 let revelandoFinal = false;
@@ -237,11 +278,7 @@ function iniciarReveladoSecuencial() {
 
   const intervalRevelado = setInterval(() => {
     caracteresReveladosFinales++;
-    
-    if (audioActivado) {
-      audios.revealChar.currentTime = 0;
-      audios.revealChar.play().catch(() => {});
-    }
+    reproducirSonido(audios.revealChar);
 
     if (caracteresReveladosFinales >= claveReal.length) {
       clearInterval(intervalRevelado);
@@ -260,7 +297,6 @@ function obtenerTextoMatrizORevelado() {
   return resultado;
 }
 
-// SECUENCIA CINEMÁTICA DE CARGA MATRIX PARA EVITAR LAG EN 3D
 let matrixInterval;
 const fasesCarga = [
   ">> INITIALIZING 3D ENGINE PIPELINE...",
@@ -295,11 +331,9 @@ function abrirTimeline() {
   
   iniciarEfectoMatrix();
 
-  // Precarga fluida en segundo plano
   modelsOverlay.classList.remove("hidden");
   modelsOverlay.style.opacity = "0";
 
-  // Transición de 2.2 segundos para asegurar renderizado 3D sin lagazos
   setTimeout(() => {
     detenerEfectoMatrix();
     modelsOverlay.style.opacity = "";
@@ -311,7 +345,8 @@ function abrirTimeline() {
 }
 
 function verificarClave() {
-  const password = passInput.value.trim().toUpperCase();
+  const password = pinInputs.map(i => i.value.trim()).join("").toUpperCase();
+  if (password.length < 4) return;
 
   if (password === "P28!") {
     const ahora = new Date().getTime();
@@ -321,10 +356,8 @@ function verificarClave() {
       consoleStatus.innerText = ">> YOU KNOW THE SECRET, BUT IT IS NOT TIME YET...";
       
       if (audioActivado) {
-        audios.wrong.pause();
-        audios.glitch.pause();
-        audios.dudin.currentTime = 0;
-        audios.dudin.play().catch(() => {});
+        audios.wrong.pause(); audios.glitch.pause();
+        reproducirSonido(audios.dudin);
       }
 
       mainTerminal.classList.add("glitch-shake");
@@ -337,7 +370,7 @@ function verificarClave() {
     
     if (audioActivado) {
       audios.wrong.pause(); audios.glitch.pause(); audios.dudin.pause();
-      audios.granted.currentTime = 0; audios.granted.play().catch(() => {});
+      reproducirSonido(audios.granted);
     }
 
     consoleSection.classList.add("hidden");
@@ -354,27 +387,25 @@ function verificarClave() {
       consoleStatus.innerText = ">> SECURITY ALERT! SYSTEM OVERLOAD.";
       if (audioActivado) {
         audios.wrong.pause();
-        audios.glitch.currentTime = 0; audios.glitch.play().catch(() => {});
+        reproducirSonido(audios.glitch);
       }
       mainTerminal.classList.add("glitch-shake");
       setTimeout(() => { mainTerminal.classList.remove("glitch-shake"); }, 450);
     } else {
       consoleStatus.innerText = `>> INVALID PASSCODE. ATTEMPT [${intentosFallidos}/3].`;
-      if (audioActivado) {
-        audios.wrong.currentTime = 0; audios.wrong.play().catch(() => {});
-      }
+      reproducirSonido(audios.wrong);
     }
+
+    pinInputs.forEach(i => i.value = "");
+    pinInputs[0].focus();
   }
 }
 
 submitBtn.addEventListener("click", verificarClave);
-passInput.addEventListener("keypress", (e) => { if (e.key === "Enter") verificarClave(); });
 
 backToMenuBtn.addEventListener("click", () => {
-  if (audioActivado) {
-    audios.tick.currentTime = 0; audios.tick.play().catch(() => {});
-    cambiarVolumenSuave(audios.musica, 0.22, 600);
-  }
+  reproducirSonido(audios.tick);
+  if (audioActivado) { cambiarVolumenSuave(audios.musica, 0.22, 600); }
   modelsOverlay.classList.remove("active");
   setTimeout(() => { modelsOverlay.classList.add("hidden"); }, 600);
 });
@@ -386,16 +417,24 @@ document.querySelectorAll(".global-power-off").forEach(btn => {
 });
 
 function ejecutarApagadoSincronizado() {
-  Object.values(audios).forEach(a => a.pause());
+  if (audioActivado) {
+    cambiarVolumenSuave(audios.musica, 0, 300);
+    cambiarVolumenSuave(audios.estatica, 0, 300);
+  }
+
   appContainer.classList.add("fade-out-all");
+
   setTimeout(() => {
+    Object.values(audios).forEach(a => {
+      if (a !== audios.tvOff) a.pause();
+    });
+
     crtOverlay.classList.add("turn-off");
+    
     setTimeout(() => {
-      if (audioActivado) {
-        audios.tvOff.currentTime = 0;
-        audios.tvOff.play().catch(() => {});
-      }
-    }, 320);
+      reproducirSonido(audios.tvOff);
+    }, 200);
+
     setTimeout(() => {
       if (document.exitFullscreen) { document.exitFullscreen().catch(() => {}); }
       powerOffScreen.classList.remove("hidden");
@@ -414,7 +453,7 @@ function checkScrollReveal() {
 
 modelsOverlay.addEventListener("scroll", checkScrollReveal);
 
-function configurarInteraccionClick(elementId, datosClave) {
+function configurarInteraccionClick(elementId, datosClave, modeloGlbSrc) {
   const viewer = document.getElementById(elementId);
   if (!viewer) return;
   let startX = 0; let startY = 0;
@@ -426,35 +465,66 @@ function configurarInteraccionClick(elementId, datosClave) {
   viewer.addEventListener("pointerup", (e) => {
     const diffX = Math.abs(e.clientX - startX);
     const diffY = Math.abs(e.clientY - startY);
-    if (diffX < 6 && diffY < 6) { mostrarDatoCurioso(datosClave); }
+    if (diffX < 6 && diffY < 6) { 
+      mostrarDatoCurioso(datosClave, modeloGlbSrc); 
+    }
   });
 }
 
-function mostrarDatoCurioso(datos) {
+function mostrarDatoCurioso(datos, modeloGlbSrc) {
   infoHeaderTag.innerText = datos.tag;
   infoTitle.innerText = datos.titulo;
   infoLabel1.innerText = datos.label1;
   infoWhyUse.innerText = datos.porqueUso;
   infoLabel2.innerText = datos.label2;
   infoWhyChange.innerText = datos.porqueChange;
-  infoModal.classList.remove("hidden");
 
-  if (audioActivado) {
-    audios.modelClick.currentTime = 0; audios.modelClick.play().catch(() => {});
+  if (modal3dViewer && modeloGlbSrc) {
+    modal3dViewer.src = modeloGlbSrc;
   }
+
+  infoModal.classList.remove("hidden");
+  requestAnimationFrame(() => {
+    infoModal.classList.add("active-modal");
+  });
+
+  reproducirSonido(audios.modelClick);
 }
 
-// CONFIGURACIÓN DE CLICS DE LOS 8 MODELOS
-configurarInteraccionClick("mvBb", datosModelos.blackberry);
-configurarInteraccionClick("mvSmart", datosModelos.smartphone);
-configurarInteraccionClick("mvMouseWired", datosModelos.mouseWired);
-configurarInteraccionClick("mvMouseWireless", datosModelos.mouseWireless);
-configurarInteraccionClick("mvWiredAudio", datosModelos.wiredHeadphones);
-configurarInteraccionClick("mvAirpods", datosModelos.airpods);
-configurarInteraccionClick("mvDvd", datosModelos.dvd);
-configurarInteraccionClick("mvUsb", datosModelos.usbDrive);
+function cerrarModal() {
+  infoModal.classList.remove("active-modal");
+  setTimeout(() => {
+    infoModal.classList.add("hidden");
+    if (modal3dViewer) modal3dViewer.src = "";
+  }, 400);
 
-closeInfo.addEventListener("click", () => { infoModal.classList.add("hidden"); });
+  reproducirSonido(audios.tick);
+}
+
+closeInfo.addEventListener("click", cerrarModal);
+
+window.addEventListener("keydown", (e) => {
+  if (e.key === "Escape" && !infoModal.classList.contains("hidden")) {
+    cerrarModal();
+  }
+});
+
+// HOVER SOUND ON CARDS
+document.querySelectorAll(".model-card").forEach(card => {
+  card.addEventListener("mouseenter", () => {
+    reproducirSonido(audios.tick);
+  });
+});
+
+// VINCULACIÓN MODELOS 3D
+configurarInteraccionClick("mvBb", datosModelos.blackberry, "blackberry.glb");
+configurarInteraccionClick("mvSmart", datosModelos.smartphone, "smartphone.glb");
+configurarInteraccionClick("mvMouseWired", datosModelos.mouseWired, "mouse_wired.glb");
+configurarInteraccionClick("mvMouseWireless", datosModelos.mouseWireless, "mouse_wireless.glb");
+configurarInteraccionClick("mvWiredAudio", datosModelos.wiredHeadphones, "wired_headphones.glb");
+configurarInteraccionClick("mvAirpods", datosModelos.airpods, "airpods.glb");
+configurarInteraccionClick("mvDvd", datosModelos.dvd, "dvd.glb");
+configurarInteraccionClick("mvUsb", datosModelos.usbDrive, "usb_drive.glb");
 
 audioToggle.addEventListener("click", () => {
   audioActivado = !audioActivado;
@@ -482,9 +552,7 @@ function actualizarContador() {
       decryptText.innerText = `PASSCODE: ${generarTextoAleatorio(4)}`;
       timerDisplay.innerText = `TIME REMAINING: 00D 00H 00M 0${Math.max(0, 5 - Math.floor(progresoDemo / 20))}S`;
 
-      if (audioActivado) {
-        audios.tick.currentTime = 0; audios.tick.play().catch(() => {});
-      }
+      reproducirSonido(audios.tick);
     } else {
       timerDisplay.innerText = "TIME REMAINING: 00D 00H 00M 00S";
       iniciarReveladoSecuencial();
@@ -493,7 +561,6 @@ function actualizarContador() {
     return;
   }
 
-  // REAL TIME
   const ahora = new Date().getTime();
   const diferencia = fechaObjetivo - ahora;
 
@@ -547,10 +614,7 @@ function activarModoDemo() {
   modoDemoActivo = true;
   progresoDemo = 0;
 
-  if (audioActivado) {
-    audios.glitch.currentTime = 0;
-    audios.glitch.play().catch(() => {});
-  }
+  reproducirSonido(audios.glitch);
 
   mainTerminal.classList.add("bill-shake-effect");
   setTimeout(() => {
@@ -559,10 +623,8 @@ function activarModoDemo() {
 
   const flash = document.createElement("div");
   flash.style.position = "fixed";
-  flash.style.top = "0";
-  flash.style.left = "0";
-  flash.style.width = "100vw";
-  flash.style.height = "100vh";
+  flash.style.top = "0"; flash.style.left = "0";
+  flash.style.width = "100vw"; flash.style.height = "100vh";
   flash.style.backgroundColor = "#ffea00";
   flash.style.opacity = "0.85";
   flash.style.zIndex = "99999";
@@ -576,30 +638,3 @@ function activarModoDemo() {
     setTimeout(() => { flash.remove(); }, 400);
   }, 100);
 }
-// ==========================================
-// 💡 FUNCIONES Y EVENTOS FINALES
-// ==========================================
-
-// 1. FUNCIÓN PARA REPRODUCIR SONIDOS DE FORMA LIMPIA Y SEGURA
-function reproducirSonido(audioObj) {
-  if (!audioActivado || !audioObj) return;
-  audioObj.currentTime = 0; // Reinicia para poder sonar en cada hover rápido
-  audioObj.play().catch(error => {
-    console.log("Audio temporalmente bloqueado por el navegador:", error);
-  });
-}
-
-// 2. CERRAR LA VENTANA MODAL DE INFORMACIÓN CON LA TECLA ESCAPE (ESC)
-window.addEventListener("keydown", (e) => {
-  if (e.key === "Escape" && !infoModal.classList.contains("hidden")) {
-    infoModal.classList.add("hidden");
-    reproducirSonido(audios.tick);
-  }
-});
-
-// 3. EFECTO DE SONIDO TÁCTIL AL PASAR EL CURSOR POR LAS TARJETAS 3D (HOVER)
-document.querySelectorAll(".model-card").forEach(card => {
-  card.addEventListener("mouseenter", () => {
-    reproducirSonido(audios.tick);
-  });
-});
