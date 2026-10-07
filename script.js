@@ -576,12 +576,30 @@ function activarModoDemo() {
     setTimeout(() => { flash.remove(); }, 400);
   }, 100);
 }
-// EFECTO DE SONIDO AL PASAR EL CURSOR POR LAS TARJETAS 3D
+// ==========================================
+// 💡 FUNCIONES Y EVENTOS FINALES
+// ==========================================
+
+// 1. FUNCIÓN PARA REPRODUCIR SONIDOS DE FORMA LIMPIA Y SEGURA
+function reproducirSonido(audioObj) {
+  if (!audioActivado || !audioObj) return;
+  audioObj.currentTime = 0; // Reinicia para poder sonar en cada hover rápido
+  audioObj.play().catch(error => {
+    console.log("Audio temporalmente bloqueado por el navegador:", error);
+  });
+}
+
+// 2. CERRAR LA VENTANA MODAL DE INFORMACIÓN CON LA TECLA ESCAPE (ESC)
+window.addEventListener("keydown", (e) => {
+  if (e.key === "Escape" && !infoModal.classList.contains("hidden")) {
+    infoModal.classList.add("hidden");
+    reproducirSonido(audios.tick);
+  }
+});
+
+// 3. EFECTO DE SONIDO TÁCTIL AL PASAR EL CURSOR POR LAS TARJETAS 3D (HOVER)
 document.querySelectorAll(".model-card").forEach(card => {
   card.addEventListener("mouseenter", () => {
-    if (audioActivado) {
-      audios.tick.currentTime = 0;
-      audios.tick.play().catch(() => {});
-    }
+    reproducirSonido(audios.tick);
   });
 });
